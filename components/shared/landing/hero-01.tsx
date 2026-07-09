@@ -4,6 +4,7 @@ import * as React from "react"
 import { ArrowRight, Menu, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Logo } from "../Logo";
 
 const navItems = ["Blocks", "Pricing", "Docs", "Changelog"]
 
@@ -22,15 +23,10 @@ export default function Hero01() {
       />
 
       <header className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-5 sm:px-8">
-        <a href="#" className="flex items-center gap-2 font-semibold tracking-tight text-foreground">
+        <div className="flex items-center gap-2 font-semibold tracking-tight text-foreground">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://blockus.lndevui.com/brand/logo.svg"
-            alt="blockus"
-            className="size-6 dark:invert"
-          />
-          blockus
-        </a>
+          <Logo />
+        </div>
         <nav className="hidden items-center gap-7 md:flex">
           {navItems.map((item) => (
             <a
