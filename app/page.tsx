@@ -8,7 +8,8 @@ export default function Page() {
     <div>
       <Hero01/>
       <div className="mb-32">
-      <CallToAction/>
+        <CallToAction />
+        
       </div>
       <FaqsSection/>
     </div>

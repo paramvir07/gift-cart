@@ -1,49 +1,62 @@
 "use client"
 
 import * as React from "react"
-import { ArrowRight, Menu, X } from "lucide-react"
+import { ArrowRight, Menu, X, Clock } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Logo } from "../Logo";
+import { Logo } from "../Logo"
 
-const navItems = ["Blocks", "Pricing", "Docs", "Changelog"]
+const navItems = ["How it works", "Prizes", "Winners", "FAQ"]
+
+const stats = [
+  { value: "$12,400", label: "This week's jackpot" },
+  { value: "1,208", label: "Tickets sold today" },
+  { value: "312", label: "Winners paid out" },
+]
 
 export default function Hero01() {
   const [menuOpen, setMenuOpen] = React.useState(false)
 
   return (
-    <section className="relative isolate overflow-hidden bg-background pb-32 sm:pb-40">
+    <section className="relative isolate overflow-hidden bg-background pb-24 sm:pb-32">
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[-12rem] -z-10 h-[40rem] w-[64rem] max-w-[140%] -translate-x-1/2 opacity-60"
+        className="pointer-events-none absolute -top-48 left-1/2 -z-10 h-160 w-5xl max-w-[140%] -translate-x-1/2 opacity-50"
         style={{
           background:
-            "radial-gradient(closest-side, rgba(202, 138, 4, 0.18), transparent 72%)",
+            "radial-gradient(closest-side, rgba(245, 158, 11, 0.18), transparent 60%)",
         }}
       />
 
       <header className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-5 sm:px-8">
         <div className="flex items-center gap-2 font-semibold tracking-tight text-foreground">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <Logo />
         </div>
+
         <nav className="hidden items-center gap-7 md:flex">
-          {navItems.map((item) => (
-            <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {item}
-            </a>
-          ))}
+          {navItems.map(function (item) {
+            return (
+              <a
+                key={item}
+                href={"#" + item.toLowerCase().replace(/\s+/g, "-")}
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {item}
+              </a>
+            )
+          })}
         </nav>
+
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="ghost" className="hidden rounded-full sm:inline-flex">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="hidden rounded-full sm:inline-flex"
+          >
             Sign in
           </Button>
           <Button size="sm" className="rounded-full px-4">
-            Get started
+            Enter now
           </Button>
           <button
             type="button"
@@ -57,7 +70,11 @@ export default function Hero01() {
       </header>
 
       {menuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
+        <div
+          className="fixed inset-0 z-50 md:hidden"
+          role="dialog"
+          aria-modal="true"
+        >
           <div
             aria-hidden
             className="absolute inset-0 bg-background/80 backdrop-blur-sm"
@@ -65,7 +82,7 @@ export default function Hero01() {
           />
           <div className="absolute inset-x-4 top-4 rounded-2xl border border-border bg-card p-5 shadow-2xl shadow-black/30">
             <div className="flex items-center justify-between">
-              <span className="font-semibold tracking-tight">blockus</span>
+              <span className="font-semibold tracking-tight">luckydraw</span>
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}
@@ -76,48 +93,75 @@ export default function Hero01() {
               </button>
             </div>
             <ul className="mt-5 flex flex-col">
-              {navItems.map((item) => (
-                <li key={item}>
-                  <a
-                    href={`#${item.toLowerCase()}`}
-                    onClick={() => setMenuOpen(false)}
-                    className="block rounded-md px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
+              {navItems.map(function (item) {
+                return (
+                  <li key={item}>
+                    <a
+                      href={"#" + item.toLowerCase().replace(/\s+/g, "-")}
+                      onClick={() => setMenuOpen(false)}
+                      className="block rounded-md px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                )
+              })}
             </ul>
           </div>
         </div>
       )}
 
-      <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-7 px-6 pt-24 text-center sm:pt-32">
-        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/40 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
-          <span className="size-1 rounded-full bg-foreground" />
-          A new block every week
+      <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 pt-16 text-center sm:pt-20">
+        <span className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-600 dark:text-amber-400">
+          <Clock className="size-3.5" />
+          Next draw in 03:14:22
         </span>
 
         <h1
-          className="text-balance font-semibold tracking-tight text-foreground"
+          className="font-semibold tracking-tight text-balance text-foreground"
           style={{
             fontSize: "clamp(2.75rem, 6vw, 5rem)",
             lineHeight: 1.02,
             letterSpacing: "-0.035em",
           }}
         >
-          The library every dev wishes they had on day one.
+          Buy a coupon.
+          <br />
+          Win a real prize.
         </h1>
 
-        <p className="max-w-xl text-balance text-base text-muted-foreground sm:text-lg">
-          Production-ready React sections, hand-built on shadcn/ui and Tailwind
-          v4. Drop them in. Ship the page.
+        <p className="max-w-xl text-base text-balance text-muted-foreground sm:text-lg">
+          Every ticket enters this weekend&apos;s live draw. Transparent odds,
+          real winners, no catch.
         </p>
 
-        <Button size="lg" className="mt-2 rounded-full px-7">
-          Browse the catalog
-          <ArrowRight />
-        </Button>
+        <div className="mt-2 flex flex-col gap-3 sm:flex-row">
+          <Button size="lg" className="rounded-full px-7">
+            Get your ticket
+            <ArrowRight />
+          </Button>
+          <Button size="lg" variant="outline" className="rounded-full px-7">
+            See this week&apos;s prize
+          </Button>
+        </div>
+
+        <div className="mt-10 grid w-full max-w-xl grid-cols-3 gap-3">
+          {stats.map(function (stat) {
+            return (
+              <div
+                key={stat.label}
+                className="rounded-xl border border-border bg-card px-3 py-4 text-center"
+              >
+                <div className="text-xl font-semibold tracking-tight sm:text-2xl">
+                  {stat.value}
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {stat.label}
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
     </section>
   )

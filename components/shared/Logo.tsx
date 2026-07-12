@@ -1,4 +1,4 @@
-import { Gift } from "lucide-react";
+import { Gift } from "lucide-react"
 
 export function Logo() {
   return (
