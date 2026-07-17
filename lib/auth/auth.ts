@@ -77,12 +77,12 @@ export const auth = betterAuth({
        * Present only for customers who entered through CC.
        * Local GC admins will have null here.
        */
-      ccUserId: {
-        type: "string",
-        required: false,
-        defaultValue: null,
-        input: true,
-      },
+ccUserId: {
+      type: "string",
+      required: false,
+      defaultValue: null,
+      input: true,
+    },
 
       /*
        * Present only for CC customers when available.
