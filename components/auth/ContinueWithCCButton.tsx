@@ -1,62 +1,48 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { authClient } from "@/lib/auth/auth-client";
-import { Button } from "@/components/ui/button";
+import { useState } from "react"
+import { authClient } from "@/lib/auth/auth-client"
+import { Button } from "@/components/ui/button"
 
 export default function ContinueWithCCButton() {
-  const [isPending, setIsPending] =
-    useState(false);
+  const [isPending, setIsPending] = useState(false)
 
-  const [errorMessage, setErrorMessage] =
-    useState("");
+  const [errorMessage, setErrorMessage] = useState("")
 
   async function handleLogin() {
     try {
-      setIsPending(true);
-      setErrorMessage("");
+      setIsPending(true)
+      setErrorMessage("")
 
-      const { error } =
-        await authClient.signIn.oauth2({
-          providerId: "canadians-cart",
+      const { error } = await authClient.signIn.oauth2({
+        providerId: "canadians-cart",
 
-          callbackURL: "/auth/complete",
+        callbackURL: "/auth/complete",
 
-          newUserCallbackURL:
-            "/auth/complete",
+        newUserCallbackURL: "/auth/complete",
 
-          errorCallbackURL:
-            "/login?error=cc-login-failed",
+        errorCallbackURL: "/login?error=cc-login-failed",
 
-          scopes: [
-            "openid",
-            "profile",
-            "email",
-            "offline_access",
-          ],
-        });
+        scopes: ["openid", "profile", "email", "offline_access"],
+      })
 
       if (error) {
         setErrorMessage(
-          error.message ??
-            "Could not sign in with Canadian's Cart.",
-        );
+          error.message ?? "Could not sign in with Candian's Cart."
+        )
 
-        setIsPending(false);
+        setIsPending(false)
       }
     } catch (error) {
-      console.error(
-        "Canadian's Cart login failed:",
-        error,
-      );
+      console.error("Candian's Cart login failed:", error)
 
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : "Could not sign in with Canadian's Cart.",
-      );
+          : "Could not sign in with Candian's Cart."
+      )
 
-      setIsPending(false);
+      setIsPending(false)
     }
   }
 
@@ -68,16 +54,12 @@ export default function ContinueWithCCButton() {
         disabled={isPending}
         className="w-full"
       >
-        {isPending
-          ? "Connecting..."
-          : "Continue with Canadian's Cart"}
+        {isPending ? "Connecting..." : "Continue with Candian's Cart"}
       </Button>
 
       {errorMessage && (
-        <p className="text-sm text-destructive">
-          {errorMessage}
-        </p>
+        <p className="text-sm text-destructive">{errorMessage}</p>
       )}
     </div>
-  );
+  )
 }

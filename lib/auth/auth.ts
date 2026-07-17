@@ -1,60 +1,49 @@
-import { betterAuth } from "better-auth";
-import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { nextCookies } from "better-auth/next-js";
-import { MongoClient } from "mongodb";
-import {
-  admin,
-  genericOAuth,
-} from "better-auth/plugins";
+import { betterAuth } from "better-auth"
+import { mongodbAdapter } from "better-auth/adapters/mongodb"
+import { nextCookies } from "better-auth/next-js"
+import { MongoClient } from "mongodb"
+import { admin, genericOAuth } from "better-auth/plugins"
 
-const mongoUri = process.env.GC_MONGODB_URI;
-const ccBaseUrl = process.env.CC_BASE_URL;
-const ccClientId = process.env.CC_OAUTH_CLIENT_ID;
-const ccClientSecret =
-  process.env.CC_OAUTH_CLIENT_SECRET;
+const mongoUri = process.env.GC_MONGODB_URI
+const ccBaseUrl = process.env.CC_BASE_URL
+const ccClientId = process.env.CC_OAUTH_CLIENT_ID
+const ccClientSecret = process.env.CC_OAUTH_CLIENT_SECRET
 
 if (!mongoUri) {
-  throw new Error("GC_MONGODB_URI is missing");
+  throw new Error("GC_MONGODB_URI is missing")
 }
 
 if (!ccBaseUrl) {
-  throw new Error("CC_BASE_URL is missing");
+  throw new Error("CC_BASE_URL is missing")
 }
 
 if (!ccClientId) {
-  throw new Error("CC_OAUTH_CLIENT_ID is missing");
+  throw new Error("CC_OAUTH_CLIENT_ID is missing")
 }
 
 if (!ccClientSecret) {
-  throw new Error("CC_OAUTH_CLIENT_SECRET is missing");
+  throw new Error("CC_OAUTH_CLIENT_SECRET is missing")
 }
 
 declare global {
   // eslint-disable-next-line no-var
-  var _gcAuthMongoClient:
-    | MongoClient
-    | undefined;
+  var _gcAuthMongoClient: MongoClient | undefined
 }
 
-const mongoClient =
-  global._gcAuthMongoClient ??
-  new MongoClient(mongoUri);
+const mongoClient = global._gcAuthMongoClient ?? new MongoClient(mongoUri)
 
 if (process.env.NODE_ENV === "development") {
-  global._gcAuthMongoClient = mongoClient;
+  global._gcAuthMongoClient = mongoClient
 }
 
-const db = mongoClient.db();
+const db = mongoClient.db()
 
 export const auth = betterAuth({
   appName: "Gift Cart",
 
   baseURL: process.env.BETTER_AUTH_URL,
 
-  trustedOrigins: [
-    process.env.NEXT_PUBLIC_APP_URL!,
-    ccBaseUrl,
-  ],
+  trustedOrigins: [process.env.NEXT_PUBLIC_APP_URL!, ccBaseUrl],
 
   database: mongodbAdapter(db, {
     client: mongoClient,
@@ -77,12 +66,12 @@ export const auth = betterAuth({
        * Present only for customers who entered through CC.
        * Local GC admins will have null here.
        */
-ccUserId: {
-      type: "string",
-      required: false,
-      defaultValue: null,
-      input: true,
-    },
+      ccUserId: {
+        type: "string",
+        required: false,
+        defaultValue: null,
+        input: true,
+      },
 
       /*
        * Present only for CC customers when available.
@@ -121,15 +110,9 @@ ccUserId: {
           clientId: ccClientId,
           clientSecret: ccClientSecret,
 
-          discoveryUrl:
-            `${ccBaseUrl}/api/auth/.well-known/openid-configuration`,
+          discoveryUrl: `${ccBaseUrl}/api/auth/.well-known/openid-configuration`,
 
-          scopes: [
-            "openid",
-            "profile",
-            "email",
-            "offline_access",
-          ],
+          scopes: ["openid", "profile", "email", "offline_access"],
 
           pkce: true,
           requireIssuerValidation: true,
@@ -138,9 +121,9 @@ ccUserId: {
 
           mapProfileToUser: (profile) => {
             /*
-             * Canadian's Cart must send this signed claim.
+             * Candian's Cart must send this signed claim.
              */
-            const ccRole = profile.gc_role;
+            const ccRole = profile.gc_role
 
             /*
              * Customer OAuth is customer-only.
@@ -151,38 +134,31 @@ ccUserId: {
              */
             if (ccRole !== "customer") {
               throw new Error(
-                "Only Canadian's Cart customer accounts can access Gift Cart.",
-              );
+                "Only Candian's Cart customer accounts can access Gift Cart."
+              )
             }
 
             const ccUserId =
-              typeof profile.sub === "string"
-                ? profile.sub.trim()
-                : "";
+              typeof profile.sub === "string" ? profile.sub.trim() : ""
 
             const email =
               typeof profile.email === "string"
-                ? profile.email
-                    .trim()
-                    .toLowerCase()
-                : "";
+                ? profile.email.trim().toLowerCase()
+                : ""
 
             const name =
-              typeof profile.name === "string" &&
-              profile.name.trim()
+              typeof profile.name === "string" && profile.name.trim()
                 ? profile.name.trim()
-                : "Gift Cart Customer";
+                : "Gift Cart Customer"
 
             if (!ccUserId) {
-              throw new Error(
-                "Canadian's Cart did not provide a valid user ID.",
-              );
+              throw new Error("Candian's Cart did not provide a valid user ID.")
             }
 
             if (!email) {
               throw new Error(
-                "Canadian's Cart did not provide an email address.",
-              );
+                "Candian's Cart did not provide an email address."
+              )
             }
 
             return {
@@ -191,12 +167,11 @@ ccUserId: {
               email,
 
               phone:
-                typeof profile.phone_number ===
-                  "string" &&
+                typeof profile.phone_number === "string" &&
                 profile.phone_number.trim()
                   ? profile.phone_number.trim()
                   : null,
-            };
+            }
           },
         },
       ],
@@ -207,6 +182,6 @@ ccUserId: {
      */
     nextCookies(),
   ],
-});
+})
 
-export { db };
+export { db }
