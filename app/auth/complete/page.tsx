@@ -85,7 +85,7 @@ export default async function AuthCompletePage() {
     update,
     {
       upsert: true,
-      new: true,
+      returnDocument: 'after',
       runValidators: true,
       setDefaultsOnInsert: true,
     },

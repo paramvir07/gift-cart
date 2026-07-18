@@ -3,6 +3,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb"
 import { nextCookies } from "better-auth/next-js"
 import { MongoClient } from "mongodb"
 import { admin, genericOAuth } from "better-auth/plugins"
+import { oauthProvider } from "@better-auth/oauth-provider";
 
 const mongoUri = process.env.GC_MONGODB_URI
 const ccBaseUrl = process.env.CC_BASE_URL
@@ -100,6 +101,10 @@ export const auth = betterAuth({
     admin({
       defaultRole: "customer",
       adminRoles: ["admin"],
+    }),
+    oauthProvider({
+      loginPage: "/login",
+      consentPage: "/oauth/consent",
     }),
 
     genericOAuth({
