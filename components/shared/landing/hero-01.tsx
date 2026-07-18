@@ -5,6 +5,8 @@ import { ArrowRight, Menu, X, Clock } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Logo } from "../Logo"
+import Link from "next/link";
+import { CopyErrorButton } from "next/dist/next-devtools/dev-overlay/components/errors/error-overlay-toolbar/copy-error-button";
 
 const navItems = ["How it works", "Prizes", "Winners", "FAQ"]
 
@@ -53,7 +55,7 @@ export default function Hero01() {
             variant="ghost"
             className="hidden rounded-full sm:inline-flex"
           >
-            Sign in
+            <Link href="/login">Sign in</Link>
           </Button>
           <Button size="sm" className="rounded-full px-4">
             Enter now

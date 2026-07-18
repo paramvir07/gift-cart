@@ -1,6 +1,25 @@
+import { getCurrentSession } from "@/actions/auth/getUserSession.actions";
 import ContinueWithCCButton from "@/components/auth/ContinueWithCCButton"
+import { redirect } from "next/navigation"
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await getCurrentSession()
+
+  if (session) {
+    const user = session.user as typeof session.user & {
+      role?: string | null
+      ccUserId?: string | null
+    }
+
+    if (user.role === "admin") {
+      redirect("/admin")
+    }
+
+    if (user.role === "customer" && user.ccUserId) {
+      redirect("/customer")
+    }
+  }
+
   return (
     <main className="flex min-h-screen items-center justify-center p-6">
       <div className="w-full max-w-md rounded-2xl border bg-background p-6 shadow-sm">
