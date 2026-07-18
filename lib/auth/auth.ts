@@ -1,51 +1,67 @@
-import { betterAuth } from "better-auth";
-import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { nextCookies } from "better-auth/next-js";
-import { MongoClient } from "mongodb";
-import { admin, genericOAuth } from "better-auth/plugins";
+import { betterAuth } from "better-auth"
+import { mongodbAdapter } from "better-auth/adapters/mongodb"
+import { nextCookies } from "better-auth/next-js"
+import { MongoClient } from "mongodb"
+import { admin, genericOAuth } from "better-auth/plugins"
 
-const mongoUri = process.env.GC_MONGODB_URI;
-const ccBaseUrl = process.env.CC_BASE_URL;
-const ccClientId = process.env.CC_OAUTH_CLIENT_ID;
-const ccClientSecret = process.env.CC_OAUTH_CLIENT_SECRET;
+function requireUrl(name: string): string {
+  const value = process.env[name]?.trim()
 
-if (!mongoUri) {
-  throw new Error("GC_MONGODB_URI is missing");
+  if (!value) {
+    throw new Error(`${name} is missing`)
+  }
+
+  const url = new URL(value)
+
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error(`${name} must use http or https`)
+  }
+
+  return url.origin
 }
 
-if (!ccBaseUrl) {
-  throw new Error("CC_BASE_URL is missing");
+function requireEnv(name: string): string {
+  const value = process.env[name]?.trim()
+
+  if (!value) {
+    throw new Error(`${name} is missing`)
+  }
+
+  return value
 }
 
-if (!ccClientId) {
-  throw new Error("CC_OAUTH_CLIENT_ID is missing");
-}
+const mongoUri = requireEnv("GC_MONGODB_URI")
+const gcBaseUrl = requireUrl("BETTER_AUTH_URL")
+const ccBaseUrl = requireUrl("CC_BASE_URL")
+const ccClientId = requireEnv("CC_OAUTH_CLIENT_ID")
+const ccClientSecret = requireEnv("CC_OAUTH_CLIENT_SECRET")
 
-if (!ccClientSecret) {
-  throw new Error("CC_OAUTH_CLIENT_SECRET is missing");
-}
+const ccIssuer = `${ccBaseUrl}/api/auth`
+
+const gcOAuthCallbackUrl =
+  `${gcBaseUrl}/api/auth/oauth2/callback/canadians-cart`
 
 declare global {
   // eslint-disable-next-line no-var
-  var _gcAuthMongoClient: MongoClient | undefined;
+  var _gcAuthMongoClient: MongoClient | undefined
 }
 
 const mongoClient =
-  global._gcAuthMongoClient ?? new MongoClient(mongoUri);
+  global._gcAuthMongoClient ?? new MongoClient(mongoUri)
 
 if (process.env.NODE_ENV === "development") {
-  global._gcAuthMongoClient = mongoClient;
+  global._gcAuthMongoClient = mongoClient
 }
 
-const db = mongoClient.db();
+const db = mongoClient.db()
 
 export const auth = betterAuth({
   appName: "Gift Cart",
 
-  baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: gcBaseUrl,
 
   trustedOrigins: [
-    process.env.NEXT_PUBLIC_APP_URL!,
+    gcBaseUrl,
     ccBaseUrl,
   ],
 
@@ -53,6 +69,9 @@ export const auth = betterAuth({
     client: mongoClient,
   }),
 
+  /*
+   * Local email/password login is only for Gift Cart admins.
+   */
   emailAndPassword: {
     enabled: true,
     disableSignUp: true,
@@ -60,6 +79,10 @@ export const auth = betterAuth({
 
   user: {
     additionalFields: {
+      /*
+       * Set only for customers authenticated through
+       * Candian's Cart.
+       */
       ccUserId: {
         type: "string",
         required: false,
@@ -96,8 +119,18 @@ export const auth = betterAuth({
           clientId: ccClientId,
           clientSecret: ccClientSecret,
 
-          discoveryUrl:
-            `${ccBaseUrl}/api/auth/.well-known/openid-configuration`,
+          issuer: ccIssuer,
+
+          authorizationUrl:
+            `${ccBaseUrl}/api/auth/oauth2/authorize`,
+
+          tokenUrl:
+            `${ccBaseUrl}/api/auth/oauth2/token`,
+
+          userInfoUrl:
+            `${ccBaseUrl}/api/auth/oauth2/userinfo`,
+
+          redirectURI: gcOAuthCallbackUrl,
 
           scopes: [
             "openid",
@@ -107,65 +140,82 @@ export const auth = betterAuth({
           ],
 
           pkce: true,
-          requireIssuerValidation: true,
+
+          /*
+           * Must match the OAuth client registration in
+           * Candian's Cart:
+           * token_endpoint_auth_method: client_secret_basic
+           */
           authentication: "basic",
+
+          /*
+           * Update the local Gift Cart user details whenever
+           * Candian's Cart returns newer profile information.
+           */
           overrideUserInfo: true,
 
           mapProfileToUser: (profile) => {
-            const ccRole = profile.gc_role;
+            const ccRole =
+              typeof profile.gc_role === "string"
+                ? profile.gc_role.trim()
+                : ""
 
             if (ccRole !== "customer") {
               throw new Error(
-                "Only Candian's Cart customer accounts can access Gift Cart.",
-              );
+                "Only Candian's Cart customer accounts can access Gift Cart."
+              )
             }
 
             const ccUserId =
               typeof profile.sub === "string"
                 ? profile.sub.trim()
-                : "";
+                : ""
 
             const email =
               typeof profile.email === "string"
                 ? profile.email.trim().toLowerCase()
-                : "";
+                : ""
 
             const name =
               typeof profile.name === "string" &&
               profile.name.trim()
                 ? profile.name.trim()
-                : "Gift Cart Customer";
+                : "Gift Cart Customer"
+
+            const phone =
+              typeof profile.phone_number === "string" &&
+              profile.phone_number.trim()
+                ? profile.phone_number.trim()
+                : null
 
             if (!ccUserId) {
               throw new Error(
-                "Candian's Cart did not provide a valid user ID.",
-              );
+                "Candian's Cart did not provide a valid user ID."
+              )
             }
 
             if (!email) {
               throw new Error(
-                "Candian's Cart did not provide an email address.",
-              );
+                "Candian's Cart did not provide an email address."
+              )
             }
 
             return {
               ccUserId,
               name,
               email,
-
-              phone:
-                typeof profile.phone_number === "string" &&
-                profile.phone_number.trim()
-                  ? profile.phone_number.trim()
-                  : null,
-            };
+              phone,
+            }
           },
         },
       ],
     }),
 
+    /*
+     * Keep this last.
+     */
     nextCookies(),
   ],
-});
+})
 
-export { db };
+export { db }
