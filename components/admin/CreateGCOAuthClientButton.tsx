@@ -1,7 +1,7 @@
 "use client";
 
+import { createGCOAuthClient } from "@/actions/auth/create-gc-oauth-client";
 import { useState, useTransition } from "react";
-import { createGCOAuthClient } from "@/actions/create-gc-oauth-client";
 
 type OAuthClientResult =
   | {
