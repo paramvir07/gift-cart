@@ -27,6 +27,5 @@
     "@blocks-so": "https://blocks.so/r/{name}.json",
     "@blockus": "https://blockus.lndevui.com/r/{name}.json",
     "@efferd": "https://efferd.com/r/{style}/{name}.json"
-
   }
 }
