@@ -25,7 +25,6 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>{children}</ThemeProvider>
-        <Footer />
       </body>
     </html>
   )
