@@ -10,25 +10,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  UserIcon,
-  SettingsIcon,
-  CreditCardIcon,
-  LogOutIcon,
-} from "lucide-react"
+import { UserIcon, SettingsIcon, LogOutIcon } from "lucide-react"
 
 const user = {
-  name: "Shaban Haider",
-  email: "shaban@efferd.com",
-  avatar: "https://github.com/shabanhr.png",
+  name: "GC Admin",
+  email: "admin@admin.com",
+  avatar:
+    "https://i.pinimg.com/control1/1200x/2b/2e/81/2b2e81bb72ede3ab745ba1d8d0ca3bb4.jpg",
 }
 
 export function NavUser() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Avatar className="size-8" />}>
-        <AvatarImage src={user.avatar} />
-        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+      <DropdownMenuTrigger
+        render={<button type="button" className="rounded-full outline-none" />}
+      >
+        <Avatar className="size-8">
+          <AvatarImage src={user.avatar} />
+          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuGroup>
@@ -58,12 +58,7 @@ export function NavUser() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <CreditCardIcon />
-            Plan & Billing
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+        <DropdownMenuGroup></DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem

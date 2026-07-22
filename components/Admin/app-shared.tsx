@@ -1,126 +1,74 @@
-import type { ReactNode } from "react";
-import { LayoutGridIcon, BarChart3Icon, BriefcaseIcon, UsersIcon, PlugIcon, KeyRoundIcon, SettingsIcon, CreditCardIcon, HelpCircleIcon, BookOpenIcon } from "lucide-react";
+import type { ReactNode } from "react"
+import {
+  LayoutGridIcon,
+  BarChart3Icon,
+  BriefcaseIcon,
+  UsersIcon,
+  PlugIcon,
+  KeyRoundIcon,
+  SettingsIcon,
+  CreditCardIcon,
+  HelpCircleIcon,
+  BookOpenIcon,
+} from "lucide-react"
 
 export type SidebarNavItem = {
-	title: string;
-	path?: string;
-	icon?: ReactNode;
-	isActive?: boolean;
-	subItems?: SidebarNavItem[];
-};
+  title: string
+  path?: string
+  icon?: ReactNode
+  subItems?: SidebarNavItem[]
+}
 
 export type SidebarNavGroup = {
-	label?: string;
-	items: SidebarNavItem[];
-};
+  label?: string
+  items: SidebarNavItem[]
+}
 
 export const navGroups: SidebarNavGroup[] = [
-	{
-		label: "Product",
-		items: [
-			{
-				title: "Dashboard",
-				path: "#/dashboard",
-				icon: (
-					<LayoutGridIcon
-					/>
-				),
-				isActive: true,
-			},
-			{
-				title: "Analytics",
-				path: "#/analytics",
-				icon: (
-					<BarChart3Icon
-					/>
-				),
-			},
-			{
-				title: "Projects",
-				path: "#/projects",
-				icon: (
-					<BriefcaseIcon
-					/>
-				),
-			},
-		],
-	},
-	{
-		label: "Workspace",
-		items: [
-			{
-				title: "Team",
-				path: "#/team",
-				icon: (
-					<UsersIcon
-					/>
-				),
-			},
-			{
-				title: "Integrations",
-				path: "#/integrations",
-				icon: (
-					<PlugIcon
-					/>
-				),
-			},
-			{
-				title: "API Keys",
-				path: "#/api-keys",
-				icon: (
-					<KeyRoundIcon
-					/>
-				),
-			},
-		],
-	},
-	{
-		label: "Administration",
-		items: [
-			{
-				title: "Settings",
-				path: "#/settings",
-				icon: (
-					<SettingsIcon
-					/>
-				),
-			},
-			{
-				title: "Billing",
-				path: "#/billing",
-				icon: (
-					<CreditCardIcon
-					/>
-				),
-			},
-		],
-	},
-];
+	
+  {
+    label: "Product",
+    items: [
+      { title: "Dashboard", path: "/admin", icon: <LayoutGridIcon /> },
+      { title: "Analytics", path: "/admin/analytics", icon: <BarChart3Icon /> },
+      { title: "Projects", path: "/admin/projects", icon: <BriefcaseIcon /> },
+    ],
+  },
+  {
+    label: "Workspace",
+    items: [
+      { title: "Team", path: "/admin/team", icon: <UsersIcon /> },
+      {
+        title: "Integrations",
+        path: "/admin/integrations",
+        icon: <PlugIcon />,
+      },
+      { title: "API Keys", path: "/admin/api-keys", icon: <KeyRoundIcon /> },
+    ],
+  },
+  {
+    label: "Administration",
+    items: [
+      { title: "Settings", path: "/admin/settings", icon: <SettingsIcon /> },
+      { title: "Billing", path: "/admin/billing", icon: <CreditCardIcon /> },
+    ],
+  },
+]
 
 export const footerNavLinks: SidebarNavItem[] = [
-	{
-		title: "Help Center",
-		path: "#/help",
-		icon: (
-			<HelpCircleIcon
-			/>
-		),
-	},
-	{
-		title: "Documentation",
-		path: "#/documentation",
-		icon: (
-			<BookOpenIcon
-			/>
-		),
-	},
-];
+  { title: "Help Center", path: "/admin/help", icon: <HelpCircleIcon /> },
+  {
+    title: "Documentation",
+    path: "/admin/documentation",
+    icon: <BookOpenIcon />,
+  },
+]
 
 export const navLinks: SidebarNavItem[] = [
-	...navGroups.flatMap((group) =>
-		group.items.flatMap((item) =>
-			item.subItems?.length ? [item, ...item.subItems] : [item]
-		)
-	),
-	...footerNavLinks,
-];
+  ...navGroups.flatMap((group) =>
+    group.items.flatMap((item) =>
+      item.subItems?.length ? [item, ...item.subItems] : [item]
+    )
+  ),
+  ...footerNavLinks,
+]

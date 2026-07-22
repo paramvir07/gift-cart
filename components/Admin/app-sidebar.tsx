@@ -1,7 +1,8 @@
 "use client"
 
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LogoIcon } from "@/components/Admin/logo"
 import {
   Sidebar,
   SidebarContent,
@@ -12,10 +13,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { footerNavLinks, navGroups } from "@/components/Admin/app-shared"
-import { LatestChange } from "@/components/Admin/latest-change"
 import { NavGroup } from "@/components/Admin/nav-group"
+import { Gift } from "lucide-react"
 
 export function AppSidebar() {
+  const pathname = usePathname()
+
   return (
     <Sidebar
       className={cn(
@@ -27,9 +30,11 @@ export function AppSidebar() {
       variant="sidebar"
     >
       <SidebarHeader className="h-14 justify-center border-b px-2">
-        <SidebarMenuButton render={<a href="#link" />}>
-          <LogoIcon />
-          <span className="font-medium text-foreground!">Efferd</span>
+        <SidebarMenuButton render={<Link href="/admin" />}>
+          <Gift />
+          <span className="font-medium text-foreground!">
+            Gift Cart Dashboard
+          </span>
         </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
@@ -38,15 +43,14 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter className="gap-0 p-0">
-        <LatestChange />
         <SidebarMenu className="border-t p-2">
           {footerNavLinks.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 className="text-muted-foreground"
-                isActive={item.isActive}
+                isActive={item.path ? pathname === item.path : false}
                 size="sm"
-                render={<a href={item.path} />}
+                render={<Link href={item.path ?? "#"} />}
               >
                 {item.icon}
                 <span>{item.title}</span>
@@ -56,7 +60,7 @@ export function AppSidebar() {
         </SidebarMenu>
         <div className="px-4 pt-4 pb-2 transition-opacity group-data-[collapsible=icon]:pointer-events-none group-data-[collapsible=icon]:opacity-0">
           <p className="text-[9px] text-nowrap text-muted-foreground">
-            © {new Date().getFullYear()} Efferd LLC
+            © {new Date().getFullYear()} Gift Cart
           </p>
         </div>
       </SidebarFooter>
